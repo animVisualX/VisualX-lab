@@ -1,88 +1,88 @@
 import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
-import time
+import streamlit.components.v1 as components
 
-# VisualX Setup
-st.set_page_config(page_title="VisualX Kinetic Lab", layout="centered")
+# 1. Page Config
+st.set_page_config(page_title="VisualX: Anti-Gravity", layout="wide")
 
-# Full Screen Dynamic Background CSS
+# 2. The Premium UI Styling (CSS)
 st.markdown("""
     <style>
-    /* Targeting the entire app container */
-    .stApp {
-        background: linear-gradient(-45deg, #0d0d0d, #162121, #1a0d1a, #0d0d0d);
-        background-size: 400% 400%;
-        animation: gradientBG 20s ease infinite;
-        color: #ffffff;
-    }
-
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Making the main container clean */
-    .main {
-        background: transparent;
-    }
-
-    h1 { 
-        color: #00FFFF; 
-        text-align: center; 
-        font-family: 'Courier New', monospace;
-        letter-spacing: 4px;
-        text-shadow: 0 0 15px #00FFFF;
-        margin-bottom: 50px;
-    }
-
-    /* Styling Sidebar for dark aesthetic */
-    section[data-testid="stSidebar"] {
-        background-color: rgba(13, 13, 13, 0.8);
-        border-right: 1px solid #00FFFF;
+    .stApp { background-color: #050505; }
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Floating Control Panel */
+    .css-1d391kg { 
+        background: rgba(20, 20, 20, 0.7) !important;
+        backdrop-filter: blur(20px);
+        border-right: 1px solid #222;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("VISUALX: KINETIC WAVE")
+# 3. Sidebar Modifiers
+st.sidebar.title("PHASE CONTROLS")
+glow_color = st.sidebar.color_picker("Energy Color", "#00FFFF")
+wave_speed = st.sidebar.slider("Flow Speed", 0.01, 0.1, 0.03)
+wave_amp = st.sidebar.slider("Gravity Pull", 10, 100, 50)
 
-# Sidebar Controls
-st.sidebar.header("Modifiers")
-speed = st.sidebar.slider("Flow Speed", 0.0, 1.0, 0.2, step=0.05)
-amp = st.sidebar.slider("Amplitude", 0.1, 5.0, 2.0, step=0.1)
-freq = st.sidebar.slider("Frequency", 0.5, 5.0, 1.0, step=0.1)
-neon_color = st.sidebar.color_picker("Glow Color", "#00FFFF")
+# 4. The "Anti-Gravity" Engine (HTML5 Canvas + JS)
+# Isme hum Matplotlib use nahi kar rahe, ye seedha browser par render hoga.
+canvas_html = f"""
+<canvas id="canvas" style="width:100%; height:80vh;"></canvas>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let w, h, particles = [];
+    let tick = 0;
 
-# Placeholder for the Plot
-plot_spot = st.empty()
+    function init() {{
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    }}
 
-# Persistent state for time
-if 't' not in st.session_state:
-    st.session_state.t = 0
+    function draw() {{
+        ctx.clearRect(0, 0, w, h);
+        
+        // Asli Neon Glow Logic
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = '{glow_color}';
+        ctx.strokeStyle = '{glow_color}';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
-# Animation Loop
-while True:
-    x = np.linspace(0, 10, 500)
-    y = amp * np.sin(freq * x - st.session_state.t)
-    
-    # Figure setup with alpha for transparency
-    fig, ax = plt.subplots(figsize=(10, 5))
-    fig.patch.set_alpha(0) # Makes the figure background transparent
-    ax.set_facecolor((0, 0, 0, 0)) # Makes the axes background transparent
-    
-    # Cinematic Glow Effect
-    ax.plot(x, y, color=neon_color, linewidth=6, alpha=0.2) 
-    ax.plot(x, y, color=neon_color, linewidth=2)           
-    
-    # Fixing the camera view
-    ax.set_ylim(-6, 6)
-    ax.axis('off')
-    
-    # Display the plot
-    plot_spot.pyplot(fig)
-    plt.close(fig)
-    
-    # Physics Update
-    st.session_state.t += speed
-    time.sleep(0.01)
+        ctx.beginPath();
+        for(let i = 0; i < w; i++) {{
+            // Multi-Layered Sine Wave for "Anti-Gravity" feel
+            let y = h/2 + Math.sin(i * 0.01 + tick) * {wave_amp} 
+                        + Math.cos(i * 0.005 - tick * 0.5) * ({wave_amp}/2);
+            if(i === 0) ctx.moveTo(i, y);
+            else ctx.lineTo(i, y);
+        }}
+        ctx.stroke();
+
+        // Adding Subtle Floating Particles (Anti-Gravity)
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '{glow_color}33'; // Faint particles
+        for(let j = 0; j < 5; j++) {{
+             ctx.beginPath();
+             ctx.arc(Math.random()*w, Math.random()*h, 1, 0, Math.PI*2);
+             ctx.fill();
+        }}
+
+        tick += {wave_speed};
+        requestAnimationFrame(draw);
+    }}
+
+    window.addEventListener('resize', init);
+    init();
+    draw();
+</script>
+"""
+
+# Render the dynamic engine
+components.html(canvas_html, height=600)
+
+st.markdown("<h1 style='text-align: center; color: white; font-family: monospace; letter-spacing: 10px;'>VISUALX</h1>", unsafe_allow_html=True)
