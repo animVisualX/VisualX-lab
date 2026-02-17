@@ -4,12 +4,20 @@ import streamlit.components.v1 as components
 # 1. Dashboard Config
 st.set_page_config(page_title="VisualX Lab", layout="wide")
 
-# 2. Premium CSS (Ultra-Responsive & Fixed Dropdown)
+# 2. Master CSS (Hiding Menu, Header, and Fixing Dropdowns)
 st.markdown("""
     <style>
+    /* 1. Hiding the top white bar and 3 dots menu completely */
+    header, [data-testid="stHeader"], #MainMenu {
+        visibility: hidden;
+        height: 0% !important;
+    }
+    footer {visibility: hidden;}
+    
     .stApp { background-color: #050505; color: #ffffff; }
-    [data-testid="stSidebar"], header, footer {display: none;}
+    [data-testid="stSidebar"] {display: none;}
 
+    /* 2. Professional Title */
     .lab-title {
         text-align: left;
         font-family: 'Courier New', monospace;
@@ -21,7 +29,7 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Professional Gray Labels [cite: 2025-12-21] */
+    /* 3. Gray Labels [cite: 2025-12-21] */
     .stSlider label, .stSelectbox label { 
         color: #cccccc !important; 
         font-family: 'Inter', sans-serif;
@@ -30,7 +38,7 @@ st.markdown("""
         font-size: 0.8rem !important;
     }
 
-    /* 🛡️ DROPDOWN FIX: Force Dark/Transparent Look */
+    /* 4. Dropdown Dark Mode Fix */
     div[data-baseweb="select"] {
         background-color: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid #333 !important;
@@ -42,7 +50,6 @@ st.markdown("""
         color: #cccccc !important;
     }
 
-    /* List inside the dropdown */
     ul[role="listbox"] {
         background-color: #0a0a0a !important;
         border: 1px solid #444 !important;
@@ -77,7 +84,7 @@ st.markdown("""
     <div class="lab-title">WAVEFORM ANALYSIS</div>
     """, unsafe_allow_html=True)
 
-# 3. Controls
+# 3. Scientific Controls
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
@@ -92,14 +99,13 @@ with st.container():
         st.write("") 
         if st.button("SHARE LAB"):
             st.toast("URL COPIED")
-            # Transparent iframe to prevent white screen/blocks
             components.html(
                 f"<script>window.parent.navigator.clipboard.writeText(window.parent.location.href);</script>",
                 height=0, width=0
             )
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. Auto-Scaling Canvas Engine [cite: 2025-12-27]
+# 4. Universal Responsive Canvas [cite: 2025-12-27]
 canvas_html = f"""
 <div id="cont" style="width:100%; height:65vh; background:#050505;">
     <canvas id="osc" style="width:100%; height:100%;"></canvas>
@@ -135,3 +141,4 @@ canvas_html = f"""
 
 components.html(canvas_html, height=600)
 st.markdown("<p style='text-align: right; color: #444; font-family: monospace; padding-right: 20px;'>VisualX</p>", unsafe_allow_html=True)
+
