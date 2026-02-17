@@ -37,7 +37,7 @@ st.markdown("""
     
     .stSlider label { color: #888 !important; font-family: monospace; }
     </style>
-    <div class="lab-title">VISUALX_LAB // SINE_WAVE_OSCILLATOR_v2.0</div>
+    <div class="lab-title">SINE WAVE</div>
     """, unsafe_allow_html=True)
 
 # 3. Scientific Controls (On-Page)
@@ -106,4 +106,4 @@ canvas_code = f"""
 
 components.html(canvas_code, height=500)
 
-st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>ASPECT_RATIO: 16:9 // RENDER_STABLE</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>VisualX</p>", unsafe_allow_html=True)
