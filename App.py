@@ -1,88 +1,109 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# 1. Page Config
-st.set_page_config(page_title="VisualX: Anti-Gravity", layout="wide")
+# 1. Dashboard Configuration (16:9 Landscape)
+st.set_page_config(page_title="VisualX Lab | Wave Analysis", layout="wide")
 
-# 2. The Premium UI Styling (CSS)
+# 2. Premium Professional CSS
 st.markdown("""
     <style>
-    .stApp { background-color: #050505; }
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* Floating Control Panel */
-    .css-1d391kg { 
-        background: rgba(20, 20, 20, 0.7) !important;
-        backdrop-filter: blur(20px);
-        border-right: 1px solid #222;
+    .stApp {
+        background-color: #050505; /* Deep Black for VisualX theme */
+        color: #ffffff;
     }
+    
+    /* UI Cleanup */
+    [data-testid="stSidebar"], header, footer {display: none;}
+
+    /* Professional Title Styling */
+    .lab-title {
+        text-align: left;
+        font-family: 'Courier New', monospace;
+        color: #00FFFF;
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        border-left: 4px solid #00FFFF;
+        margin: 20px 0;
+    }
+
+    /* Main Interface Control Deck */
+    .control-panel {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid #222;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .stSlider label { color: #888 !important; font-family: monospace; }
     </style>
+    <div class="lab-title">VISUALX_LAB // SINE_WAVE_OSCILLATOR_v2.0</div>
     """, unsafe_allow_html=True)
 
-# 3. Sidebar Modifiers
-st.sidebar.title("PHASE CONTROLS")
-glow_color = st.sidebar.color_picker("Energy Color", "#00FFFF")
-wave_speed = st.sidebar.slider("Flow Speed", 0.01, 0.1, 0.03)
-wave_amp = st.sidebar.slider("Gravity Pull", 10, 100, 50)
+# 3. Scientific Controls (On-Page)
+with st.container():
+    st.markdown('<div class="control-panel">', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([2, 2, 1])
+    with c1:
+        amp = st.slider("AMPLITUDE (A)", 0.1, 5.0, 2.5, step=0.1)
+    with c2:
+        freq = st.slider("FREQUENCY (f)", 0.5, 10.0, 3.0, step=0.1)
+    with c3:
+        neon = st.color_picker("TRACE_COLOR", "#00FFFF")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. The "Anti-Gravity" Engine (HTML5 Canvas + JS)
-# Isme hum Matplotlib use nahi kar rahe, ye seedha browser par render hoga.
-canvas_html = f"""
-<canvas id="canvas" style="width:100%; height:80vh;"></canvas>
+# 4. Professional Visualization Engine (Canvas Based)
+# Physics: y = A * sin(2 * PI * f * x + t)
+canvas_code = f"""
+<canvas id="oscillator" style="width:100%; height:55vh;"></canvas>
 <script>
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('oscillator');
     const ctx = canvas.getContext('2d');
-    
-    let w, h, particles = [];
-    let tick = 0;
+    let w, h, t = 0;
 
-    function init() {{
+    function resize() {{
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
     }}
 
-    function draw() {{
+    function render() {{
         ctx.clearRect(0, 0, w, h);
         
-        // Asli Neon Glow Logic
-        ctx.shadowBlur = 25;
-        ctx.shadowColor = '{glow_color}';
-        ctx.strokeStyle = '{glow_color}';
+        // Grid Lines (Scientific Feel)
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        for(let i=0; i<w; i+=w/20) {{
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+        }}
+        for(let j=0; j<h; j+=h/10) {{
+            ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke();
+        }}
+
+        // The Sine Wave
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '{neon}';
+        ctx.strokeStyle = '{neon}';
         ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
 
         ctx.beginPath();
-        for(let i = 0; i < w; i++) {{
-            // Multi-Layered Sine Wave for "Anti-Gravity" feel
-            let y = h/2 + Math.sin(i * 0.01 + tick) * {wave_amp} 
-                        + Math.cos(i * 0.005 - tick * 0.5) * ({wave_amp}/2);
-            if(i === 0) ctx.moveTo(i, y);
-            else ctx.lineTo(i, y);
+        for(let x = 0; x < w; x++) {{
+            // Real Physics Equation
+            let y = h/2 + Math.sin(x * 0.01 * {freq} + t) * ({amp} * 40);
+            if(x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
         }}
         ctx.stroke();
 
-        // Adding Subtle Floating Particles (Anti-Gravity)
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '{glow_color}33'; // Faint particles
-        for(let j = 0; j < 5; j++) {{
-             ctx.beginPath();
-             ctx.arc(Math.random()*w, Math.random()*h, 1, 0, Math.PI*2);
-             ctx.fill();
-        }}
-
-        tick += {wave_speed};
-        requestAnimationFrame(draw);
+        t -= 0.05;
+        requestAnimationFrame(render);
     }}
 
-    window.addEventListener('resize', init);
-    init();
-    draw();
+    window.addEventListener('resize', resize);
+    resize();
+    render();
 </script>
 """
 
-# Render the dynamic engine
-components.html(canvas_html, height=600)
+components.html(canvas_code, height=500)
 
-st.markdown("<h1 style='text-align: center; color: white; font-family: monospace; letter-spacing: 10px;'>VISUALX</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>ASPECT_RATIO: 16:9 // RENDER_STABLE</p>", unsafe_allow_html=True)
