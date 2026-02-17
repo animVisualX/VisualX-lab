@@ -50,7 +50,7 @@ with st.container():
     c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
     
     with c1:
-        wave_type = st.selectbox("WAVEFORM_TYPE", ["SINE", "SQUARE", "SAWTOOTH"])
+        wave_type = st.selectbox("WAVEFORM TYPE", ["SINE", "SQUARE", "SAWTOOTH"])
     with c2:
         amp = st.slider("AMPLITUDE (A)", 0.1, 5.0, 2.0)
     with c3:
@@ -122,6 +122,6 @@ with st.container():
     """, unsafe_allow_html=True)
 
 
-components.html(canvas_code, height=500)
+components.html(canvas_html, height=500)
 st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>VisualX</p>", unsafe_allow_html=True)
 
