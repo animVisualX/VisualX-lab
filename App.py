@@ -32,11 +32,16 @@ st.markdown("""
         font-size: 0.85rem !important;
     }
 
-    /* 3. Transparent Glass Dropdown */
+    /* 3. Transparent Glass Dropdown Main Box */
     div[data-baseweb="select"] {
         background-color: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid #333 !important;
-        border-radius: 4px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    div[data-baseweb="select"]:hover {
+        border-color: #00FFFF !important;
     }
     
     div[data-baseweb="select"] > div {
@@ -44,36 +49,35 @@ st.markdown("""
         color: #cccccc !important;
     }
 
-    /* 4. Dropdown List Styling */
+    /* 4. Dropdown Menu (The Floating List) */
     ul[role="listbox"] {
-        background-color: #0a0a0a !important;
-        border: 1px solid #333 !important;
+        background-color: rgba(10, 10, 10, 0.9) !important; /* Darker & Sleek */
+        border: 1px solid #444 !important;
+        backdrop-filter: blur(15px); /* Background blur effect */
+        border-radius: 8px;
+        padding: 5px;
     }
     
+    /* Individual Options inside the list */
     li[role="option"] {
-        color: #cccccc !important;
+        color: #888 !important; /* Dim gray for unselected */
+        font-family: 'Inter', sans-serif;
+        border-radius: 5px;
+        margin: 2px 0;
+        transition: 0.2s;
+    }
+    
+    li[role="option"]:hover {
+        background-color: rgba(0, 255, 255, 0.1) !important; /* Subtle Cyan highlight */
+        color: #00FFFF !important; /* Brighten text on hover */
     }
 
-    .control-panel {
-        background: rgba(255, 255, 255, 0.01);
-        border: 1px solid #1a1a1a;
-        padding: 20px;
-        border-radius: 8px;
-        margin: 10px 0;
+    /* Selected Item Highlight */
+    div[aria-selected="true"] {
+        background-color: rgba(0, 255, 255, 0.05) !important;
+        color: #00FFFF !important;
     }
-    
-    .stButton>button {
-        width: 100%;
-        background-color: transparent;
-        color: #00FFFF;
-        border: 1px solid #00FFFF;
-        font-family: monospace;
-    }
-    
-    .stButton>button:hover {
-        background-color: #00FFFF;
-        color: #000;
-    }
+
     </style>
     <div class="lab-title">WAVEFORM ANALYSIS</div>
     """, unsafe_allow_html=True)
