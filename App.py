@@ -1,16 +1,15 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# 1. Dashboard Config (16:9 Landscape)
+# 1. Dashboard Config
 st.set_page_config(page_title="VisualX Lab", layout="wide")
 
-# 2. Premium Professional CSS (Minimalist & Clean)
+# 2. Premium CSS (Minimalist Gray + Transparent Dropdown)
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
     [data-testid="stSidebar"], header, footer {display: none;}
 
-    /* 1. Scientific Header */
     .lab-title {
         text-align: left;
         font-family: 'Courier New', monospace;
@@ -22,7 +21,7 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* 2. Light Gray Labels (Clean & Professional) */
+    /* Light Gray Labels [cite: 2025-12-21] */
     .stSlider label, .stSelectbox label { 
         color: #cccccc !important; 
         font-family: 'Inter', sans-serif;
@@ -32,16 +31,11 @@ st.markdown("""
         font-size: 0.85rem !important;
     }
 
-    /* 3. Transparent Glass Dropdown Main Box */
+    /* Transparent Dropdown Styling */
     div[data-baseweb="select"] {
         background-color: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid #333 !important;
         border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-    
-    div[data-baseweb="select"]:hover {
-        border-color: #00FFFF !important;
     }
     
     div[data-baseweb="select"] > div {
@@ -49,40 +43,42 @@ st.markdown("""
         color: #cccccc !important;
     }
 
-    /* 4. Dropdown Menu (The Floating List) */
+    /* Dropdown Inner Menu [cite: 2025-12-21] */
     ul[role="listbox"] {
-        background-color: rgba(10, 10, 10, 0.9) !important; /* Darker & Sleek */
+        background-color: #0a0a0a !important;
         border: 1px solid #444 !important;
-        backdrop-filter: blur(15px); /* Background blur effect */
-        border-radius: 8px;
-        padding: 5px;
+        backdrop-filter: blur(15px);
     }
     
-    /* Individual Options inside the list */
     li[role="option"] {
-        color: #888 !important; /* Dim gray for unselected */
-        font-family: 'Inter', sans-serif;
-        border-radius: 5px;
-        margin: 2px 0;
-        transition: 0.2s;
+        color: #888 !important;
     }
     
     li[role="option"]:hover {
-        background-color: rgba(0, 255, 255, 0.1) !important; /* Subtle Cyan highlight */
-        color: #00FFFF !important; /* Brighten text on hover */
-    }
-
-    /* Selected Item Highlight */
-    div[aria-selected="true"] {
-        background-color: rgba(0, 255, 255, 0.05) !important;
+        background-color: rgba(0, 255, 255, 0.1) !important;
         color: #00FFFF !important;
     }
 
+    .control-panel {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid #1a1a1a;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+    
+    .stButton>button {
+        width: 100%;
+        background-color: transparent;
+        color: #00FFFF;
+        border: 1px solid #00FFFF;
+        font-family: monospace;
+    }
     </style>
     <div class="lab-title">WAVEFORM ANALYSIS</div>
     """, unsafe_allow_html=True)
 
-# 3. Scientific Controls & Sharing
+# 3. Controls & Sharing
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
@@ -97,10 +93,14 @@ with st.container():
         st.write("") 
         if st.button("SHARE LAB"):
             st.toast("URL COPIED")
-            components.html("<script>navigator.clipboard.writeText(window.parent.location.href);</script>", height=0)
+            # Fixed Transparent JS component
+            st.components.v1.html(
+                f"<script>window.parent.navigator.clipboard.writeText(window.parent.location.href);</script>",
+                height=0, width=0
+            )
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. Canvas Engine
+# 4. Canvas Engine [cite: 2025-12-24, 2025-12-27]
 canvas_html = f"""
 <canvas id="osc" style="width:100%; height:55vh;"></canvas>
 <script>
@@ -129,6 +129,4 @@ canvas_html = f"""
 """
 
 components.html(canvas_html, height=500)
-
-# Right bottom markdown
 st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>VisualX</p>", unsafe_allow_html=True)
