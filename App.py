@@ -4,24 +4,27 @@ import streamlit.components.v1 as components
 # 1. Dashboard Config
 st.set_page_config(page_title="VisualX Lab", layout="wide")
 
-# 2. Premium CSS (Ultra-Responsive & Fixed Dropdown)
+# 2. Premium CSS (Fixed Dropdown & Removed Bottom White Space)
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #ffffff; }
     [data-testid="stSidebar"], header, footer {display: none;}
+    
+    /* Remove padding that causes scrolling/white gaps */
+    .block-container { padding: 0px !important; margin: 0px !important; }
 
     .lab-title {
         text-align: left;
         font-family: 'Courier New', monospace;
         color: #ffffff; 
         font-size: 1.1rem;
-        padding: 10px 20px;
+        padding: 15px 20px;
         border-left: 3px solid #00FFFF;
         margin-top: 10px;
         letter-spacing: 2px;
     }
 
-    /* Professional Gray Labels [cite: 2025-12-21] */
+    /* Professional Gray Labels */
     .stSlider label, .stSelectbox label { 
         color: #cccccc !important; 
         font-family: 'Inter', sans-serif;
@@ -30,11 +33,10 @@ st.markdown("""
         font-size: 0.8rem !important;
     }
 
-    /* 🛡️ DROPDOWN FIX: Force Dark/Transparent Look */
+    /* Fixed Dark Dropdown */
     div[data-baseweb="select"] {
         background-color: rgba(255, 255, 255, 0.03) !important;
         border: 1px solid #333 !important;
-        border-radius: 4px !important;
     }
     
     div[data-baseweb="select"] > div {
@@ -42,7 +44,6 @@ st.markdown("""
         color: #cccccc !important;
     }
 
-    /* List inside the dropdown */
     ul[role="listbox"] {
         background-color: #0a0a0a !important;
         border: 1px solid #444 !important;
@@ -52,18 +53,13 @@ st.markdown("""
         color: #888 !important;
         background-color: #0a0a0a !important;
     }
-    
-    li[role="option"]:hover {
-        background-color: rgba(0, 255, 255, 0.1) !important;
-        color: #00FFFF !important;
-    }
 
     .control-panel {
         background: rgba(255, 255, 255, 0.01);
         border: 1px solid #1a1a1a;
         padding: 15px;
         border-radius: 8px;
-        margin: 10px;
+        margin: 10px 20px;
     }
 
     .stButton>button {
@@ -72,6 +68,7 @@ st.markdown("""
         color: #00FFFF;
         border: 1px solid #00FFFF;
         font-family: monospace;
+        margin-top: 25px;
     }
     </style>
     <div class="lab-title">WAVEFORM ANALYSIS</div>
@@ -89,20 +86,18 @@ with st.container():
     with c3:
         freq = st.slider("FREQUENCY (f)", 0.5, 10.0, 3.0)
     with c4:
-        st.write("") 
         if st.button("SHARE LAB"):
             st.toast("URL COPIED")
-            # Transparent iframe to prevent white screen/blocks
             components.html(
                 f"<script>window.parent.navigator.clipboard.writeText(window.parent.location.href);</script>",
                 height=0, width=0
             )
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. Auto-Scaling Canvas Engine [cite: 2025-12-27]
+# 4. Full Responsive Canvas Engine
 canvas_html = f"""
-<div id="cont" style="width:100%; height:65vh; background:#050505;">
-    <canvas id="osc" style="width:100%; height:100%;"></canvas>
+<div id="cont" style="width:100%; height:80vh; background:#050505; margin:0; padding:0; overflow:hidden;">
+    <canvas id="osc" style="width:100%; height:100%; display:block;"></canvas>
 </div>
 <script>
     const canvas = document.getElementById('osc');
@@ -133,5 +128,8 @@ canvas_html = f"""
 </script>
 """
 
-components.html(canvas_html, height=600)
-st.markdown("<p style='text-align: right; color: #444; font-family: monospace; padding-right: 20px;'>VisualX</p>", unsafe_allow_html=True)
+# Fixed: Use 100% of the remaining height
+components.html(canvas_html, height=800)
+
+st.markdown("<p style='text-align: right; color: #444; font-family: monospace; padding-right: 20px; margin-top:-30px;'>VisualX</p>", unsafe_allow_html=True)
+
