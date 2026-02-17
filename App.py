@@ -4,32 +4,37 @@ import streamlit.components.v1 as components
 # 1. Page Configuration
 st.set_page_config(page_title="VisualX Lab", layout="wide")
 
-# 2. Aggressive CSS to Remove Header & Dots
+# 2. Aggressive CSS to REMOVE HEADER & DOTS
 st.markdown("""
     <style>
-    /* 1. Remove Top White Bar & Dots Completely */
+    /* --- HIDING THE MENU & HEADER --- */
+    /* Ye command upar wale 3 dots aur white bar ko remove karti hai */
     [data-testid="stHeader"] {
         display: none !important;
     }
-    
-    section[data-testid="stSidebar"] {
-        display: none;
+    /* Ye command purane browsers ke liye safety hai */
+    header {
+        display: none !important;
     }
+    /* Footer aur sidebar ko bhi chupata hai */
+    footer {display: none !important;}
+    [data-testid="stSidebar"] {display: none !important;}
 
-    /* 2. Remove Default Top Padding */
+    /* --- GLOBAL STYLING --- */
+    /* Full Dark Background */
+    .stApp, body, html {
+        background-color: #050505 !important;
+        color: #ffffff;
+    }
+    
+    /* Remove default top padding */
     .block-container {
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
         margin-top: 0rem !important;
     }
 
-    /* 3. Global Dark Background */
-    .stApp, header, body {
-        background-color: #050505 !important;
-        color: #ffffff;
-    }
-
-    /* 4. VisualX Title Styling */
+    /* --- VISUALX UI ELEMENTS --- */
     .lab-title {
         font-family: 'Courier New', monospace;
         color: #ffffff; 
@@ -42,7 +47,7 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* 5. Controls Styling */
+    /* Gray Labels for sliders */
     .stSlider label, .stSelectbox label { 
         color: #cccccc !important; 
         font-family: sans-serif;
@@ -87,7 +92,7 @@ st.markdown("""
         margin-top: 28px; 
     }
     
-    /* 6. Fixed Footer Watermark */
+    /* Fixed Footer Watermark */
     .fixed-footer {
         position: fixed;
         bottom: 10px;
