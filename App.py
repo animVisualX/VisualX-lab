@@ -25,7 +25,7 @@ fig, ax = plt.subplots(figsize=(8, 4))
 # Dark Mode Styling
 fig.patch.set_facecolor('#0d0d0d')
 ax.set_facecolor('#0d0d0d')
-
+ax.set_ylim(-5,5)
 # Plotting
 ax.plot(x, y, color=color, linewidth=3)
 
