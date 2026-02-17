@@ -57,69 +57,70 @@ with st.container():
         freq = st.slider("FREQUENCY (f)", 0.5, 10.0, 3.0)
     with c4:
         st.write("") # Spacing
-        if st.button("SHARE_LAB"):
-            st.toast("LAB_URL_COPIED_TO_CLIPBOARD")
+        if st.button("SHARE LAB"):
+            st.toast("LAB URL COPIED TO CLIPBOARD")
             # JavaScript to copy URL
             components.html("<script>navigator.clipboard.writeText(window.parent.location.href);</script>", height=0)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .stApp { background-color: #050505; color: #ffffff; }
+    [data-testid="stSidebar"], header, footer {display: none;}
 
-# 4. Professional Visualization Engine (Canvas Based)
-canvas_code = f"""
-<canvas id="oscillator" style="width:100%; height:55vh;"></canvas>
-<script>
-    const canvas = document.getElementById('oscillator');
-    const ctx = canvas.getContext('2d');
-    let w, h, t = 0;
+    /* 1. Scientific Header - Subtle Glow */
+    .lab-title {
+        text-align: left;
+        font-family: 'Courier New', monospace;
+        color: #ffffff; 
+        font-size: 1.1rem;
+        padding: 10px 20px;
+        border-left: 3px solid #00FFFF;
+        margin-top: 20px;
+        letter-spacing: 2px;
+    }
 
-    function resize() {{
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-    }}
+    /* 2. Light Gray Labels (Clean & Professional) */
+    .stSlider label, .stSelectbox label, .stColorPicker label { 
+        color: #cccccc !important; /* Light Gray */
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem !important;
+        text-shadow: none !important; /* Glow Removed */
+    }
 
-    function render() {{
-        ctx.clearRect(0, 0, w, h);
-        
-        // Background Grid
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 1;
-        for(let i=0; i<w; i+=w/20) {{ ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }}
-        for(let j=0; j<h; j+=h/10) {{ ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke(); }}
+    /* 3. Transparent Glass Dropdown */
+    div[data-baseweb="select"] {
+        background-color: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid #333 !important;
+        border-radius: 4px;
+    }
+    
+    div[data-baseweb="select"] > div {
+        background-color: transparent !important;
+        color: #cccccc !important;
+    }
 
-        // Trace Setup
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#00FFFF';
-        ctx.strokeStyle = '#00FFFF';
-        ctx.lineWidth = 3;
+    /* 4. Dropdown List Styling */
+    ul[role="listbox"] {
+        background-color: #0a0a0a !important;
+        border: 1px solid #333 !important;
+    }
+    
+    li[role="option"] {
+        color: #cccccc !important;
+    }
 
-        ctx.beginPath();
-        for(let x = 0; x < w; x++) {{
-            let angle = x * 0.01 * {freq} + t;
-            let y_val = 0;
+    .control-panel {
+        background: rgba(255, 255, 255, 0.01);
+        border: 1px solid #1a1a1a;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-            if("{wave_type}" === "SINE") {{
-                y_val = Math.sin(angle);
-            }} else if("{wave_type}" === "SQUARE") {{
-                y_val = Math.sign(Math.sin(angle));
-            }} else if("{wave_type}" === "SAWTOOTH") {{
-                y_val = 2 * (angle / (2 * Math.PI) - Math.floor(0.5 + angle / (2 * Math.PI)));
-            }}
-
-            let y = h/2 + y_val * ({amp} * 40);
-            if(x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }}
-        ctx.stroke();
-
-        t -= 0.05;
-        requestAnimationFrame(render);
-    }}
-
-    window.addEventListener('resize', resize);
-    resize();
-    render();
-</script>
-"""
 
 components.html(canvas_code, height=500)
 st.markdown("<p style='text-align: right; color: #444; font-family: monospace;'>VisualX</p>", unsafe_allow_html=True)
