@@ -4,16 +4,14 @@ import streamlit.components.v1 as components
 # 1. Page Configuration
 st.set_page_config(page_title="VisualX Lab | Lissajous", layout="wide")
 
-# 2. Aggressive CSS to REMOVE HEADER & DOTS (Same as Waveform)
+# 2. Aggressive CSS to REMOVE HEADER & DOTS
 st.markdown("""
     <style>
-    /* Hiding the menu & header completely */
     [data-testid="stHeader"] { display: none !important; }
     header { display: none !important; }
     footer { display: none !important; }
     [data-testid="stSidebar"] { display: none !important; }
 
-    /* Global Styling */
     .stApp, body, html {
         background-color: #050505 !important;
         color: #ffffff;
@@ -24,7 +22,6 @@ st.markdown("""
         margin-top: 0rem !important;
     }
 
-    /* Title Styling */
     .lab-title {
         font-family: 'Courier New', monospace;
         color: #ffffff; 
@@ -37,7 +34,6 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Labels */
     .stSlider label { 
         color: #cccccc !important; 
         font-family: sans-serif;
@@ -45,7 +41,6 @@ st.markdown("""
         font-size: 0.8rem !important;
     }
 
-    /* Control Panel */
     .control-panel {
         background: rgba(255, 255, 255, 0.01);
         border: 1px solid #1a1a1a;
@@ -54,7 +49,6 @@ st.markdown("""
         margin: 0px 20px;
     }
 
-    /* Share Button */
     .stButton>button {
         width: 100%;
         background-color: transparent;
@@ -63,24 +57,25 @@ st.markdown("""
         margin-top: 28px; 
     }
     
-    /* Fixed Footer Watermark */
+    /* BRANDING: Fixed Footer Watermark */
     .fixed-footer {
         position: fixed;
-        bottom: 10px;
-        right: 20px;
-        color: #555;
+        bottom: 12px;
+        right: 25px;
+        color: #666666; /* Thoda bright kiya hai taaki easily readable ho */
         font-family: monospace;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         pointer-events: none;
         z-index: 9999;
+        letter-spacing: 1px;
     }
     </style>
     
     <div class="lab-title">LISSAJOUS KINEMATICS</div>
-    <div class="fixed-footer">VISUALX</div>
+    <div class="fixed-footer">@anim.VisualX</div>
     """, unsafe_allow_html=True)
 
-# 3. Controls Section (A and B Frequencies)
+# 3. Controls Section
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     c1, c2, c3 = st.columns([2, 2, 1])
@@ -95,7 +90,7 @@ with st.container():
             components.html("<script>window.parent.navigator.clipboard.writeText(window.parent.location.href);</script>", height=0, width=0)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. Lissajous Canvas Engine
+# 4. Perfectly Closed Canvas Engine
 canvas_html = f"""
 <div id="wrapper" style="width:100%; height:65vh; background:#050505; overflow:hidden;">
     <canvas id="canvas" style="width:100%; height:100%; display:block;"></canvas>
@@ -119,22 +114,29 @@ canvas_html = f"""
         for(let i=0; i<w; i+=w/20) {{ ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }}
         for(let j=0; j<h; j+=h/10) {{ ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(w, j); ctx.stroke(); }}
         
-        // Lissajous Curve (Cyan Glow)
+        // Lissajous Curve
         ctx.strokeStyle = '#00FFFF'; ctx.lineWidth = 3; ctx.shadowBlur = 15; ctx.shadowColor = '#00FFFF';
         ctx.beginPath();
         
         const a = {freq_x};
         const b = {freq_y};
-        const scale = Math.min(w, h) * 0.4; // Responsive scaling
+        const scale = Math.min(w, h) * 0.4;
         const cx = w / 2;
         const cy = h / 2;
         
-        // Draw the full curve for the current phase (t)
+        // Loop stopping exactly before mathematically exceeding 2*PI
         for(let theta = 0; theta <= Math.PI * 2; theta += 0.01) {{
             let x = cx + Math.sin(a * theta + t) * scale;
             let y = cy + Math.sin(b * theta) * scale;
             if(theta === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }}
+        
+        // Force the exact final point to bridge the tiny gap
+        let exactEndX = cx + Math.sin(a * Math.PI * 2 + t) * scale;
+        let exactEndY = cy + Math.sin(b * Math.PI * 2) * scale;
+        ctx.lineTo(exactEndX, exactEndY);
+        
+        ctx.closePath(); 
         ctx.stroke(); 
         
         // Tracer Point (Magenta)
@@ -146,7 +148,7 @@ canvas_html = f"""
         ctx.shadowColor = '#FF007F';
         ctx.fill();
 
-        t -= 0.03; // Controls the speed of the 3D rotation illusion
+        t -= 0.03; 
         requestAnimationFrame(loop);
     }}
     
