@@ -48,21 +48,13 @@ st.markdown("""
         border-radius: 8px;
         margin: 0px 20px;
     }
-
-    .stButton>button {
-        width: 100%;
-        background-color: transparent;
-        color: #00FFFF;
-        border: 1px solid #00FFFF;
-        margin-top: 28px; 
-    }
     
     /* BRANDING: Fixed Footer Watermark */
     .fixed-footer {
         position: fixed;
         bottom: 12px;
         right: 25px;
-        color: #666666; /* Thoda bright kiya hai taaki easily readable ho */
+        color: #666666; 
         font-family: monospace;
         font-size: 0.9rem;
         pointer-events: none;
@@ -75,9 +67,11 @@ st.markdown("""
     <div class="fixed-footer">@anim.VisualX</div>
     """, unsafe_allow_html=True)
 
-# 3. Controls Section
+# 3. Controls Section (Only Sliders, No Button)
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
+    
+    # Sirf 2 columns banaye hain barabar size ke
     c1, c2 = st.columns(2)
     
     with c1:
@@ -87,8 +81,7 @@ with st.container():
         
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-# 4. Perfectly Closed Canvas Engine
+# 4. Perfectly Closed Canvas Engine (Slow & Cinematic)
 canvas_html = f"""
 <div id="wrapper" style="width:100%; height:65vh; background:#050505; overflow:hidden;">
     <canvas id="canvas" style="width:100%; height:100%; display:block;"></canvas>
@@ -146,7 +139,8 @@ canvas_html = f"""
         ctx.shadowColor = '#FF007F';
         ctx.fill();
 
-        t -= 0.03; 
+        // Cinematic Slow Speed
+        t -= 0.005; 
         requestAnimationFrame(loop);
     }}
     
