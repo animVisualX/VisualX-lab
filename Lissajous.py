@@ -140,7 +140,7 @@ canvas_html = f"""
         ctx.fill();
 
         // Cinematic Slow Speed
-        t -= 0.005; 
+        t -= 0.006; 
         requestAnimationFrame(loop);
     }}
     
