@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 # 1. Page Configuration
 st.set_page_config(page_title="VisualX Lab | Lissajous", layout="wide")
 
-# 2. Aggressive CSS to REMOVE HEADER & DOTS
+# 2.CSS 
 st.markdown("""
     <style>
     [data-testid="stHeader"] { display: none !important; }
@@ -71,7 +71,7 @@ st.markdown("""
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
     
-    # Sirf 2 columns banaye hain barabar size ke
+
     c1, c2 = st.columns(2)
     
     with c1:
