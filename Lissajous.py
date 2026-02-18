@@ -78,17 +78,15 @@ st.markdown("""
 # 3. Controls Section
 with st.container():
     st.markdown('<div class="control-panel">', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([2, 2, 1])
+    c1, c2 = st.columns(2)
     
     with c1:
         freq_x = st.slider("FREQUENCY X (a)", 1, 10, 3)
     with c2:
         freq_y = st.slider("FREQUENCY Y (b)", 1, 10, 2)
-    with c3:
-        if st.button("SHARE LAB"):
-            st.toast("LINK COPIED")
-            components.html("<script>window.parent.navigator.clipboard.writeText(window.parent.location.href);</script>", height=0, width=0)
+        
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # 4. Perfectly Closed Canvas Engine
 canvas_html = f"""
