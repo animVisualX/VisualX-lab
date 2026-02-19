@@ -56,7 +56,7 @@ st.markdown("""
     
     <div class="watermark">@anim.VisualX</div>
     <div class="title-container">
-        <h1 class="main-title">Double Pendulum Dynamics</h1>
+        <h1 class="main-title">Chaos Dynamics Pro</h1>
     </div>
 """, unsafe_allow_html=True)
 
@@ -74,7 +74,7 @@ with col3:
 
 # Animation Engine (HTML5 Canvas + JS)
 canvas_html = f"""
-<div id="canvas-container" style="width: 100%; height: 95vh; overflow: hidden; position: relative; background: #050505;">
+<div id="canvas-container" style="width: 100%; height: 90vh; overflow: hidden; position: relative; background: #050505;">
     <canvas id="pendulumCanvas"></canvas>
 </div>
 
@@ -100,7 +100,7 @@ window.addEventListener('resize', resize);
 resize();
 
 function animate() {{
-    // Physics Iterations
+    // Physics Logic (Sub-stepping for stability)
     for(let i=0; i<3; i++) {{
         let num1 = -g * (2 * m1 + m2) * Math.sin(a1);
         let num2 = -m2 * g * Math.sin(a1 - 2 * a2);
@@ -130,15 +130,25 @@ function animate() {{
     path.push({{x: x2, y: y2}});
     if (path.length > maxPath) path.shift();
 
+    // 1. CLEAR CANVAS
     ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, width, height);
 
-    // Pivot is moved to middle-top to accommodate long 200+200 strings
-    ctx.translate(width/2, height/4);
+    // 2. ADAPTIVE SCALING & CENTERING
+    // To prevent cutting, we calculate the max reach (r1+r2) and adjust scale
+    const totalLength = r1 + r2;
+    const padding = 60;
+    const availableHeight = height - padding * 2;
+    const scale = Math.min(1.0, availableHeight / (totalLength * 2));
+    
+    ctx.save();
+    // Center the pivot points horizontally, and place vertically at 1/2 of canvas
+    ctx.translate(width/2, height/2);
+    ctx.scale(scale, scale);
 
-    // 1. Tracer Path (Cyan Glow)
+    // 3. DRAW CYAN TRACE (Drawn first so it stays BEHIND the pendulum)
     ctx.beginPath();
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.5 / scale; // Adjust width for scale
     ctx.strokeStyle = '#00FFFF';
     ctx.shadowBlur = 10;
     ctx.shadowColor = '#00FFFF';
@@ -148,40 +158,41 @@ function animate() {{
     }}
     ctx.stroke();
 
-    // 2. Bright Strings (Grey/White)
+    // 4. DRAW STRINGS (Drawn on top of trace)
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = '#E0E0E0';
-    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 3 / scale;
+    ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
 
-    // 3. Prominent Fixed Pivot (White/Grey Only)
-    // Outer Grey Ring
+    // 5. DRAW FIXED PIVOT (Drawn on top of trace)
     ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#444444';
+    ctx.arc(0, 0, 8 / scale, 0, Math.PI * 2);
+    ctx.fillStyle = '#444444'; // Grey outer
     ctx.fill();
-    // Inner White Core
     ctx.beginPath();
-    ctx.arc(0, 0, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#FFFFFF';
+    ctx.arc(0, 0, 4 / scale, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF'; // White inner
     ctx.fill();
 
-    // 4. Masses (Magenta Glow)
+    // 6. DRAW MASSES (Drawn on top)
     ctx.fillStyle = '#FF007F';
     ctx.shadowBlur = 15;
     ctx.shadowColor = '#FF007F';
+    
     ctx.beginPath();
-    ctx.arc(x1, y1, 8, 0, Math.PI*2);
+    ctx.arc(x1, y1, 8 / scale, 0, Math.PI*2);
     ctx.fill();
+    
     ctx.beginPath();
-    ctx.arc(x2, y2, 10, 0, Math.PI*2);
+    ctx.arc(x2, y2, 10 / scale, 0, Math.PI*2);
     ctx.fill();
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.restore();
     requestAnimationFrame(animate);
 }}
 
@@ -192,4 +203,4 @@ body {{ margin: 0; overflow: hidden; }}
 </style>
 """
 
-components.html(canvas_html, height=850)
+components.html(canvas_html, height=800)
