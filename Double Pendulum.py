@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # VisualX Global Configuration
-st.set_page_config(page_title="VisualX | Double Pendulum Pro", layout="wide")
+st.set_page_config(page_title="VisualX | Double Pendulum", layout="wide")
 
 # CSS Injection for VisualX Standard UI
 st.markdown("""
