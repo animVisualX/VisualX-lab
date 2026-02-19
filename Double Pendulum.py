@@ -2,27 +2,29 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # VisualX Global Configuration
-st.set_page_config(page_title="VisualX | Double Pendulum Chaos", layout="wide")
+st.set_page_config(page_title="VisualX | Double Pendulum Pro", layout="wide")
 
 # CSS Injection for VisualX Standard UI
 st.markdown("""
     <style>
+    /* Hide Streamlit UI Elements */
     header, footer, .stDeployButton, [data-testid="stToolbar"], [data-testid="stSidebar"] {
         display: none !important;
     }
     
+    /* Global Background and Typography */
     body, [data-testid="stAppViewContainer"] {
         background-color: #050505 !important;
         color: #ffffff;
         font-family: 'Inter', sans-serif;
     }
 
+    /* Cinematic Title Styling */
     .title-container {
         border-left: 3px solid #00FFFF;
         padding-left: 20px;
-        margin: 20px 0 40px 0;
+        margin: 20px 0 30px 0;
     }
-    
     .main-title {
         font-family: 'Courier New', monospace;
         font-size: 2.2rem;
@@ -31,13 +33,15 @@ st.markdown("""
         color: #ffffff;
     }
 
+    /* Slider UI Styling */
     .stSlider label {
         color: #cccccc !important;
         font-family: 'Courier New', monospace;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 
+    /* Watermark */
     .watermark {
         position: fixed;
         bottom: 20px;
@@ -52,25 +56,25 @@ st.markdown("""
     
     <div class="watermark">@anim.VisualX</div>
     <div class="title-container">
-        <h1 class="main-title">Double Pendulum Chaos Theory</h1>
+        <h1 class="main-title">Double Pendulum Dynamics</h1>
     </div>
 """, unsafe_allow_html=True)
 
-# Parameter Controls
+# Controls
 col1, col2, col3 = st.columns(3)
 with col1:
-    m1 = st.slider("Mass 1", 5.0, 50.0, 20.0, 1.0)
-    m2 = st.slider("Mass 2", 5.0, 50.0, 20.0, 1.0)
+    m1 = st.slider("Mass Upper (m1)", 5.0, 50.0, 20.0, 1.0)
+    m2 = st.slider("Mass Lower (m2)", 5.0, 50.0, 20.0, 1.0)
 with col2:
-    l1 = st.slider("Length 1", 50.0, 200.0, 150.0, 1.0)
-    l2 = st.slider("Length 2", 50.0, 200.0, 150.0, 1.0)
+    l1 = st.slider("Length Upper (l1)", 50.0, 250.0, 200.0, 1.0)
+    l2 = st.slider("Length Lower (l2)", 50.0, 250.0, 200.0, 1.0)
 with col3:
-    g = st.slider("Gravity", 0.1, 2.0, 0.98, 0.01)
-    trace_len = st.slider("Trace Length", 100, 2000, 1000, 10)
+    g = st.slider("Gravity", 0.1, 2.5, 1.2, 0.01)
+    trace_len = st.slider("Trace History", 100, 3000, 1500, 50)
 
 # Animation Engine (HTML5 Canvas + JS)
 canvas_html = f"""
-<div id="canvas-container" style="width: 100%; height: 80vh; overflow: hidden; position: relative; background: #050505;">
+<div id="canvas-container" style="width: 100%; height: 95vh; overflow: hidden; position: relative; background: #050505;">
     <canvas id="pendulumCanvas"></canvas>
 </div>
 
@@ -79,8 +83,9 @@ const canvas = document.getElementById('pendulumCanvas');
 const ctx = canvas.getContext('2d');
 let width, height;
 
+// Simulation variables
 let r1 = {l1}, r2 = {l2}, m1 = {m1}, m2 = {m2}, g = {g};
-let a1 = Math.PI / 2, a2 = Math.PI / 2;
+let a1 = Math.PI / 2.2, a2 = Math.PI / 2.5;
 let a1_v = 0, a2_v = 0;
 
 let path = [];
@@ -95,8 +100,8 @@ window.addEventListener('resize', resize);
 resize();
 
 function animate() {{
-    // Physics - Run 2 steps per frame for stability
-    for(let i=0; i<2; i++) {{
+    // Physics Iterations
+    for(let i=0; i<3; i++) {{
         let num1 = -g * (2 * m1 + m2) * Math.sin(a1);
         let num2 = -m2 * g * Math.sin(a1 - 2 * a2);
         let num3 = -2 * Math.sin(a1 - a2) * m2;
@@ -111,14 +116,10 @@ function animate() {{
         den = r2 * (2 * m1 + m2 - m2 * Math.cos(2 * a1 - 2 * a2));
         let a2_a = (num1 * (num2 + num3 + num4)) / den;
 
-        a1_v += a1_a;
-        a2_v += a2_a;
+        a1_v += a1_a * 0.2;
+        a2_v += a2_a * 0.2;
         a1 += a1_v;
         a2 += a2_v;
-        
-        // Dampening for cinematic feel
-        a1_v *= 0.9999;
-        a2_v *= 0.9999;
     }}
 
     let x1 = r1 * Math.sin(a1);
@@ -129,13 +130,13 @@ function animate() {{
     path.push({{x: x2, y: y2}});
     if (path.length > maxPath) path.shift();
 
-    // Drawing
     ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, width, height);
 
-    ctx.translate(width/2, height/3);
+    // Pivot is moved to middle-top to accommodate long 200+200 strings
+    ctx.translate(width/2, height/4);
 
-    // Draw Tracer Path
+    // 1. Tracer Path (Cyan Glow)
     ctx.beginPath();
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = '#00FFFF';
@@ -147,27 +148,37 @@ function animate() {{
     }}
     ctx.stroke();
 
-    // Draw Pendulum Arms
+    // 2. Bright Strings (Grey/White)
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = '#ffffff33';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#E0E0E0';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.lineTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
 
-    // Draw Bobs
+    // 3. Prominent Fixed Pivot (White/Grey Only)
+    // Outer Grey Ring
+    ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#444444';
+    ctx.fill();
+    // Inner White Core
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fill();
+
+    // 4. Masses (Magenta Glow)
+    ctx.fillStyle = '#FF007F';
     ctx.shadowBlur = 15;
     ctx.shadowColor = '#FF007F';
-    ctx.fillStyle = '#FF007F';
-    
     ctx.beginPath();
-    ctx.arc(x1, y1, 6, 0, Math.PI*2);
+    ctx.arc(x1, y1, 8, 0, Math.PI*2);
     ctx.fill();
-    
     ctx.beginPath();
-    ctx.arc(x2, y2, 8, 0, Math.PI*2);
+    ctx.arc(x2, y2, 10, 0, Math.PI*2);
     ctx.fill();
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -181,4 +192,4 @@ body {{ margin: 0; overflow: hidden; }}
 </style>
 """
 
-components.html(canvas_html, height=750)
+components.html(canvas_html, height=850)
