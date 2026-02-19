@@ -56,7 +56,7 @@ st.markdown("""
     
     <div class="watermark">@anim.VisualX</div>
     <div class="title-container">
-        <h1 class="main-title">Chaos Dynamics Pro</h1>
+        <h1 class="main-title">Double Pendulum</h1>
     </div>
 """, unsafe_allow_html=True)
 
